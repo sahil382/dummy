@@ -1,0 +1,30 @@
+Gradient descent is an optimization algorithm commonly used in machine learning and deep learning to minimize a cost or loss function. The goal of gradient descent is to find the minimum of a function by iteratively adjusting the model's parameters in the direction of the steepest descent, or the negative gradient of the function.
+
+Here's how gradient descent works:
+
+1. **Initialization**: Start with an initial guess for the model's parameters (weights and biases). These parameters determine the function's shape and performance.
+
+2. **Compute the Gradient**: Calculate the gradient (partial derivatives) of the cost or loss function with respect to each parameter. The gradient provides information about the slope and direction of the function at the current parameter values.
+
+3. **Update Parameters**: Adjust the model's parameters by taking steps in the direction of the negative gradient. The size of each step is controlled by a hyperparameter called the learning rate (α). The update rule for each parameter (θ) is as follows:
+   
+   θ = θ - α * ∇J(θ)
+
+   Where:
+   - θ is the parameter being updated.
+   - α is the learning rate, which controls the step size.
+   - ∇J(θ) is the gradient of the cost function at the current parameter values.
+
+4. **Iterate**: Repeat steps 2 and 3 for a specified number of iterations or until a convergence criterion is met. The goal is to reach a point where the gradient approaches zero, indicating that the minimum of the cost function has been reached.
+
+There are different variants of gradient descent, including:
+
+- **Batch Gradient Descent**: Computes the gradient using the entire training dataset at each iteration. It provides accurate gradients but can be slow for large datasets.
+
+- **Stochastic Gradient Descent (SGD)**: Computes the gradient using only one randomly selected training example at each iteration. It is faster but has high variance in parameter updates.
+
+- **Mini-Batch Gradient Descent**: A compromise between batch and stochastic gradient descent. It uses a small, randomly selected subset (mini-batch) of the training data at each iteration.
+
+The choice of learning rate, the type of gradient descent, and other hyperparameters can significantly impact the training process. Finding an appropriate learning rate is crucial, as a too small learning rate may lead to slow convergence, while a too large learning rate may cause divergence or oscillations.
+
+Gradient descent is a fundamental optimization algorithm used to train machine learning models, including linear regression, neural networks, and support vector machines, among others. It helps update the model's parameters to minimize the error or loss function and improve its predictive performance.
