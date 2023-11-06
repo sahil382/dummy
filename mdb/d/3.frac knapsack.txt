@@ -1,0 +1,109 @@
+class ItemValue:
+    """Item Value DataClass"""
+
+    def __init__(self, wt_, val_, ind_):
+        self.wt = wt_
+        self.val = val_
+        self.ind = ind_
+        self.cost = val_ // wt_
+
+    def __lt__(self, other):
+        return self.cost < other.cost
+
+
+def fractionalKnapSack(wt, val, capacity):
+    """Function to get maximum value"""
+    iVal = [ItemValue(wt[i], val[i], i) for i in range(len(wt))]
+
+    # sorting items by cost
+    iVal.sort(key=lambda x: x.cost, reverse=True)
+
+    totalValue = 0
+    for i in iVal:
+        curWt = i.wt
+        curVal = i.val
+        if capacity - curWt >= 0:
+            capacity -= curWt
+            totalValue += curVal
+        else:
+            fraction = capacity / curWt
+            totalValue += curVal * fraction
+            capacity = int(capacity - (curWt * fraction))
+            break
+    return totalValue
+
+
+if __name__ == "__main__":
+    wt = [10, 40, 20, 30]
+    val = [60, 40, 100, 120]
+    capacity = 50
+
+    # Function call
+    maxValue = fractionalKnapSack(wt, val, capacity)
+    print("Maximum value in Knapsack =", maxValue)
+
+
+
+
+
+
+
+theory:
+Fractional Knapsack Theory:
+
+The Fractional Knapsack problem is a classical optimization problem that can be solved using a greedy strategy. In this problem, you are given a set of items, each with a weight (w[i]) and a value (v[i]), and a knapsack with a maximum weight capacity (W). The goal is to select items to maximize the total value while not exceeding the weight capacity of the knapsack. Unlike the 0/1 Knapsack problem, in the Fractional Knapsack problem, you can take fractions of items, allowing for a more flexible approach.
+
+Greedy Strategy:
+The greedy strategy for the Fractional Knapsack problem involves selecting items based on their value-to-weight ratio (v[i] / w[i]). You start by calculating this ratio for each item and then sorting the items in decreasing order of this ratio. You then select items in this order, filling the knapsack with as much of each item as possible until the weight limit is reached.
+
+Here are the steps to solve the Fractional Knapsack problem using the greedy strategy:
+
+1. Calculate the value-to-weight ratio (v[i] / w[i]) for each item.
+2. Sort the items in decreasing order of the value-to-weight ratio.
+3. Initialize the total value (V_total) and the current weight in the knapsack (W_current) to 0.
+4. Iterate through the sorted list of items:
+   a. If adding the entire item to the knapsack does not exceed its weight limit (W_current + w[i] <= W), add the entire item, and update V_total and W_current accordingly.
+   b. If adding the entire item would exceed the weight limit, add a fraction of the item that fits within the available capacity, and update V_total and W_current accordingly.
+5. Continue this process until the knapsack is full or all items have been considered.
+
+The result is the maximum total value (V_total) that can be obtained while not exceeding the knapsack's weight capacity.
+
+Example:
+
+Let's consider an example to illustrate the Fractional Knapsack problem:
+
+Suppose you have a knapsack with a weight capacity (W) of 15 units and the following items:
+
+Item 1: Weight (w[1]) = 7, Value (v[1]) = 42
+Item 2: Weight (w[2]) = 3, Value (v[2]) = 12
+Item 3: Weight (w[3]) = 4, Value (v[3]) = 40
+Item 4: Weight (w[4]) = 5, Value (v[4]) = 25
+
+1. Calculate the value-to-weight ratios:
+
+Item 1: 42 / 7 = 6.0
+Item 2: 12 / 3 = 4.0
+Item 3: 40 / 4 = 10.0
+Item 4: 25 / 5 = 5.0
+
+2. Sort the items by their value-to-weight ratios in decreasing order:
+
+Item 3 (10.0), Item 1 (6.0), Item 4 (5.0), Item 2 (4.0)
+
+3. Initialize V_total = 0 and W_current = 0.
+
+4. Start selecting items following the greedy strategy:
+
+- Select Item 3 (value 40, weight 4). Since W_current + 4 <= W (0 + 4 <= 15), we can add the entire item. Update V_total to 40 and W_current to 4.
+
+- Select Item 1 (value 42, weight 7). Since W_current + 7 <= W (4 + 7 <= 15), we can add the entire item. Update V_total to 82 and W_current to 11.
+
+- Select Item 4 (value 25, weight 5). Since W_current + 5 <= W (11 + 5 <= 15), we can add the entire item. Update V_total to 107 and W_current to 16.
+
+At this point, the knapsack is full (W_current = 16), and all items have been considered. The maximum total value that can be obtained is 107.
+
+So, in this example, the greedy strategy for the Fractional Knapsack problem results in a maximum total value of 107 by selecting a fraction of Item 4, and all of Items 1 and 3.
+
+
+
+

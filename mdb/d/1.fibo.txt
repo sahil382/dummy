@@ -1,0 +1,83 @@
+def recursive_fibonacci(n):
+    if n<=1:
+        return n
+    else:
+        return recursive_fibonacci(n-1) + recursive_fibonacci(n-2)
+
+def non_recursive_fibonacci(n):
+    first=0
+    second=1
+    print(first)
+    print(second)
+    while n-2>0:
+        third = first + second
+        first=second
+        second=third
+        print(third)
+        n-=1
+
+if __name__=="__main__":
+    n=int(input("ENter any number: "))
+    for i in range(n):
+        print(recursive_fibonacci(i))
+    
+    non_recursive_fibonacci(n)
+
+
+
+Theory:
+Fibonacci Series Theory:
+
+The Fibonacci sequence is a well-known mathematical sequence that starts with 0 and 1, and each subsequent number in the sequence is the sum of the two preceding ones. The sequence begins as follows: 0, 1, 1, 2, 3, 5, 8, 13, 21, and so on. To generate the Fibonacci series, you can use both recursive and non-recursive approaches.
+
+1. Recursive Approach:
+
+The recursive approach for generating the Fibonacci series is straightforward. It relies on the recurrence relation:
+
+F(n) = F(n-1) + F(n-2), where F(0) = 0 and F(1) = 1.
+
+Here's a recursive Python function to calculate the nth Fibonacci number:
+
+```python
+def fibonacci_recursive(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+```
+
+Time Complexity for Recursive Approach:
+The time complexity for the recursive approach is exponential, O(2^n), because it calculates the same Fibonacci numbers multiple times. This approach has high time complexity and is not efficient for large values of n.
+
+Space Complexity for Recursive Approach:
+The space complexity for the recursive approach is O(n) because it uses the call stack to store intermediate results.
+
+2. Non-Recursive (Iterative) Approach:
+
+The non-recursive approach for generating the Fibonacci series is more efficient and uses an iterative loop to calculate the Fibonacci numbers without redundant calculations. It starts with the initial values of 0 and 1 and iteratively computes the next Fibonacci numbers.
+
+Here's a Python function for the non-recursive approach:
+
+```python
+def fibonacci_non_recursive(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+
+    return b
+```
+
+Time Complexity for Non-Recursive Approach:
+The time complexity for the non-recursive approach is O(n) because it iteratively calculates each Fibonacci number once.
+
+Space Complexity for Non-Recursive Approach:
+The space complexity for the non-recursive approach is O(1) because it uses only a constant amount of additional memory to store variables a and b.
+
+In summary, the non-recursive approach is more efficient in terms of both time and space complexity, making it the preferred method for calculating Fibonacci numbers for larger values of n. The recursive approach, while conceptually simple, is highly inefficient due to its exponential time complexity and should be avoided for practical use when n is large.

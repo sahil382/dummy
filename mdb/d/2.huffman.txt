@@ -1,0 +1,166 @@
+class Node:
+    """A Huffman Tree Node"""
+
+    def __init__(self, freq_, symbol_, left_=None, right_=None):
+        # frequency of symbol
+        self.freq = freq_
+
+        # symbol name (character)
+        self.symbol = symbol_
+
+        # node left of current node
+        self.left = left_
+
+        # node right of current node
+        self.right = right_
+
+        # tree direction (0/1)
+        self.huff = ""
+
+
+def print_nodes(node, val=""):
+    """Utility function to print huffman codes for all symbols in the newly created Huffman tree"""
+    # huffman code for current node
+    new_val = val + str(node.huff)
+
+    # if node is not an edge node then traverse inside it
+    if node.left:
+        print_nodes(node.left, new_val)
+    if node.right:
+        print_nodes(node.right, new_val)
+
+    # if node is edge node then display its huffman code
+    if not node.left and not node.right:
+        print(f"{node.symbol} -> {new_val}")
+
+
+# characters for huffman tree
+chars = ["a", "b", "c", "d", "e", "f"]
+
+# frequency of characters
+freq = [5, 9, 12, 13, 16, 45]
+
+# list containing huffman tree nodes of characters and frequencies
+nodes = [Node(freq[x], chars[x]) for x in range(len(chars))]
+
+while len(nodes) > 1:
+    # sort all the nodes in ascending order based on their frequency
+    nodes = sorted(nodes, key=lambda x: x.freq)
+
+    # pick 2 smallest nodes
+    left = nodes[0]
+    right = nodes[1]
+
+    # assign directional value to these nodes
+    left.huff = 0
+    right.huff = 1
+
+    # combine the 2 smallest nodes to create new node as their parent
+    newNode = Node(left.freq + right.freq, left.symbol + right.symbol, left, right)
+
+    # remove the 2 nodes and add their parent as new node among others
+    nodes.remove(left)
+    nodes.remove(right)
+    nodes.append(newNode)
+
+
+print("Characters :", f'[{", ".join(chars)}]')
+print("Frequency  :", freq, "\n\nHuffman Encoding:")
+print_nodes(nodes[0])
+
+
+
+
+
+
+theory:
+
+Huffman Encoding using Greedy Strategy:
+
+Huffman coding is a popular data compression technique that uses a greedy strategy to create variable-length codes for characters or symbols in a data stream. It assigns shorter codes to more frequent characters and longer codes to less frequent ones, aiming to minimize the total length of the encoded data. The process involves building a Huffman tree and encoding the data based on this tree. Here's an overview of how Huffman encoding works using a greedy strategy:
+
+1. Frequency Analysis:
+   In Huffman encoding, the first step is to analyze the input data and determine the frequency of each character or symbol. This frequency information is essential to create an optimal encoding.
+
+2. Create a Priority Queue:
+   Next, you create a priority queue (min-heap) of nodes. Each node represents a character and its frequency. Initially, each character is a single-node tree.
+
+3. Build the Huffman Tree:
+   To build the Huffman tree, you repeatedly remove the two nodes with the lowest frequencies from the priority queue and create a new node whose frequency is the sum of the frequencies of the two nodes. This new node is then inserted back into the priority queue.
+
+   This process continues until only one node remains in the priority queue, which becomes the root of the Huffman tree.
+
+4. Assign Codes:
+   Starting at the root of the Huffman tree, you traverse down the tree to assign codes to the characters. When you move left in the tree, you add '0' to the code, and when you move right, you add '1'. The codes are constructed such that no code is a prefix of another (prefix-free property), ensuring unambiguous decoding.
+
+5. Encode the Data:
+   With the Huffman tree constructed and codes assigned to characters, you can now encode the data by replacing each character with its corresponding Huffman code.
+
+Using a greedy strategy in Huffman encoding ensures that more frequent characters are represented by shorter codes, optimizing the overall length of the encoded data. This technique can be highly efficient for compressing data, particularly when there is a significant variation in character frequencies.
+
+Huffman encoding is widely used in data compression algorithms, such as those used in file compression formats like ZIP, as well as in data transmission and storage applications. It efficiently reduces the size of data while maintaining lossless compression, making it a valuable tool for various applications where data size reduction is crucial.
+
+Sure, let's illustrate Huffman encoding with a simple example:
+
+Suppose we have a string "ABRACADABRA," and we want to encode it using Huffman encoding. Here are the steps involved in the process:
+
+1. Frequency Analysis:
+   We analyze the input string to determine the frequency of each character:
+   - A: 5 times
+   - B: 2 times
+   - R: 2 times
+   - C: 1 time
+   - D: 1 time
+
+2. Create a Priority Queue:
+   We create a priority queue (min-heap) based on the character frequencies. Initially, each character is a single-node tree, and the priority queue looks like this:
+
+   ```
+   [ (C:1), (D:1), (B:2), (R:2), (A:5) ]
+   ```
+
+3. Build the Huffman Tree:
+   We repeatedly remove the two nodes with the lowest frequencies from the priority queue, combine them into a new node with a frequency equal to the sum of their frequencies, and insert the new node back into the priority queue. This process continues until only one node remains in the queue, which becomes the root of the Huffman tree.
+
+   The steps for building the Huffman tree:
+   1. Combine (C:1) and (D:1) to create (CD:2):
+   ```
+   [ (B:2), (R:2), (A:5), (CD:2) ]
+   ```
+   2. Combine (B:2) and (R:2) to create (BR:4):
+   ```
+   [ (A:5), (BR:4), (CD:2) ]
+   ```
+   3. Combine (A:5) and (BR:4) to create the root of the Huffman tree:
+   ```
+   [ (ABR:9), (CD:2) ]
+   ```
+   4. Finally, combine (ABR:9) and (CD:2) to create the root of the Huffman tree:
+   ```
+   [ (ABRACADABR:11) ]
+   ```
+
+   The resulting Huffman tree looks like this:
+   ```
+           (ABRACADABR:11)
+           /             \
+   (ABR:9)            (CD:2)
+     /   \   
+  (A:5)  (BR:4)
+         /    \
+      (B:2)  (R:2)
+   ```
+
+4. Assign Codes:
+   Starting at the root, we traverse the tree to assign codes. Left branches are assigned '0,' and right branches are assigned '1.' The codes are as follows:
+   - A: 0
+   - B: 10
+   - R: 11
+   - C: 100
+   - D: 101
+
+5. Encode the Data:
+   Using the assigned codes, we encode the original string "ABRACADABRA":
+   - ABRACADABRA becomes: 010111001011011010
+
+Now, you have successfully encoded "ABRACADABRA" using Huffman encoding, resulting in a shorter representation of the data. This is a simplified example, but it illustrates the key steps of Huffman encoding with a greedy strategy. In real applications, Huffman encoding is used to compress data efficiently by assigning shorter codes to more frequent characters, leading to data size reduction.

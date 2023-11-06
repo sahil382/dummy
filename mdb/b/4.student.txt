@@ -1,0 +1,209 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.6.2 <0.9.0;
+
+
+contract TestPayable {
+    uint x;
+    uint y;
+    // This function is called for all messages sent to
+    // this contract, except plain Ether transfers
+    // (there is no other function except the receive function).
+    // Any call with non-empty calldata to this contract will execute
+    // the fallback function (even if Ether is sent along with the call).
+    fallback() external payable { x = 1; y = msg.value; }
+
+    // This function is called for plain Ether transfers, i.e.
+    // for every call with empty calldata.
+    receive() external payable { x = 2; y = msg.value; }
+}
+
+
+contract StudentRegister {
+    mapping (uint => Student) private students;
+    address public owner;
+
+    constructor() public payable {
+        /* Set the owner to the creator of this contract */
+        owner = msg.sender;
+    }
+
+    /// Only the `owner` can access - modifier
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    /// Student structure
+    struct Student {
+        uint studentId;
+        string name;
+        /* Marks array */
+        uint[] marks;
+        uint percentage;
+        bool exist;
+    }
+
+    /// @notice Register a student in the record
+    /// @return The percentage of the student
+    function register(
+        uint studentId,
+        string memory name,
+        uint[] memory marks
+    ) public onlyOwner returns (uint) {
+        require(students[studentId].exist == false, "Student data already exist.");
+        require(marks.length == 3, "Only 3 subjects are available. Array length should be 3.");
+
+        uint totalMarks = getArraySum(marks);
+
+        uint percentage = (totalMarks * 100) / 150;
+
+        students[studentId] = Student(
+            studentId,
+            name,
+            marks,
+            percentage,
+            true
+        );
+
+        return percentage;
+    }
+
+    /// @notice Get student details from the record
+    /// @return Student id, name, marks, percentage of the student
+    function getStudentDetails(
+        uint studentId
+    ) public view returns (uint, string memory, uint[] memory, uint) {
+        require(students[studentId].exist == true, "No student data available.");
+
+        /* Access student from the registed using studentId */
+        Student memory student = students[studentId];
+
+        return(
+            student.studentId,
+            student.name,
+            student.marks,
+            student.percentage
+        );
+    }
+
+    /// @notice Get sum of the array
+    /// @return sum of the array
+    function getArraySum(uint[] memory array) private pure returns (uint sum) {
+        sum = 0;
+        for (uint i = 0; i < array.length; i++) {
+            require(0 <= array[i] && array[i] <= 100, "Marks should be between 0 and 100.");
+            sum += array[i];
+        }
+    }
+
+    function callTestPayable(TestPayable test) public returns (bool) {
+        (bool success,) = address(test).call(abi.encodeWithSignature("nonExistingFunction()"));
+        require(success);
+        // results in test.x becoming == 1 and test.y becoming 0.
+        (success,) = address(test).call{value: 1}(abi.encodeWithSignature("nonExistingFunction()"));
+        require(success);
+        // results in test.x becoming == 1 and test.y becoming 1.
+
+        // If someone sends Ether to that contract, the receive function in TestPayable will be called.
+        // Since that function writes to storage, it takes more gas than is available with a
+        // simple ``send`` or ``transfer``. Because of that, we have to use a low-level call.
+        (success,) = address(test).call{value: 2 ether}("");
+        require(success);
+        // results in test.x becoming == 2 and test.y becoming 2 ether.
+
+        return true;
+    }
+}
+
+
+
+
+
+Theory::
+l;
+In blockchain, a "fallback function" is a default function in a smart contract that gets executed when an unexpected or undefined function is called by a user or another contract. It serves as a safety mechanism to prevent transactions from failing when there's a function call mismatch, providing a way to handle unexpected interactions with the contract.
+
+
+Solidity is a high-level programming language used for writing smart contracts on the Ethereum blockchain. Here are the basic syntax elements of Solidity:
+
+1. **Pragma Directive**: The `pragma` statement specifies the compiler version to be used. It's placed at the beginning of the Solidity source code to ensure compatibility.
+
+   ```solidity
+   pragma solidity ^0.8.0;
+   ```
+
+2. **Contract Declaration**: Contracts are the fundamental building blocks of Solidity smart contracts. They encapsulate the data and functions related to the contract.
+
+   ```solidity
+   contract MyContract {
+       // Contract code goes here
+   }
+   ```
+
+3. **State Variables**: State variables are used to store data on the blockchain. They are defined within the contract and persist across function calls.
+
+   ```solidity
+   uint256 public myNumber;
+   address public owner;
+   ```
+
+4. **Functions**: Functions define the behavior and actions of the smart contract. They can be public, private, or internal.
+
+   ```solidity
+   function setNumber(uint256 _number) public {
+       myNumber = _number;
+   }
+   ```
+
+5. **Modifiers**: Modifiers are used to change the behavior of functions. They can be applied before or after a function definition to impose conditions or restrictions.
+
+   ```solidity
+   modifier onlyOwner() {
+       require(msg.sender == owner, "Only the owner can call this.");
+       _;
+   }
+   ```
+
+6. **Events**: Events are used for logging and emitting information from the smart contract. They are helpful for external applications to listen to changes in the contract's state.
+
+   ```solidity
+   event NumberUpdated(uint256 newValue);
+   ```
+
+7. **Constructor**: The constructor function is called only once when the contract is deployed and is used to initialize state variables.
+
+   ```solidity
+   constructor() {
+       owner = msg.sender;
+   }
+   ```
+
+8. **Data Types**: Solidity supports various data types, including integers, booleans, addresses, strings, and custom data structures.
+
+   ```solidity
+   uint256 public myNumber;
+   bool public isActivated;
+   string public myString;
+   ```
+
+9. **Control Structures**: Solidity includes typical control structures like `if`, `else`, `while`, and `for` loops to control the flow of your contract.
+
+   ```solidity
+   if (myNumber > 10) {
+       // Do something
+   }
+   ```
+
+10. **Function Visibility**: Functions can have different visibility levels: `public`, `internal`, `external`, or `private`, which determine who can access them.
+
+   ```solidity
+   function publicFunction() public {
+       // Publicly accessible
+   }
+
+   function internalFunction() internal {
+       // Accessible only within the contract
+   }
+   ```
+
+These are the basic syntax elements of Solidity. Writing a complete smart contract in Solidity involves combining these elements to define the contract's behavior and interactions with the blockchain.
